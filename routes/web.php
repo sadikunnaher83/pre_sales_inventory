@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -40,6 +41,17 @@ Route::middleware(TokenVerificationMiddleware::class)->group(function () {
     //product all routes
     Route::controller(ProductController::class)->group(function () {
         Route::post('/create-product', 'ProductCreate')->name('product.create');
+        Route::get('/list-product', 'ProductList')->name('product.list');
+        Route::post('/product-by-id', 'ProductById')->name('product.by.id');
+        Route::post('/update-product', 'ProductUpdate')->name('product.update');
+        Route::get('/delete-product/{id}', 'ProductDelete')->name('product.delete');
+    });
+    //customer all routes
+    Route::controller(CustomerController::class)->group(function () {
+        Route::post('/create-customer', 'CustomerCreate')->name('customer.create');
+        Route::get('/list-customer', 'CustomerList')->name('customer.list');
+        Route::post('/update-customer', 'CustomerUpdate')->name('customer.update');
+        Route::get('/delete-customer/{id}', 'CustomerDelete')->name('customer.delete');
 
     });
 
