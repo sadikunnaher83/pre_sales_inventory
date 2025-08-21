@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Middleware\TokenVerificationMiddleware;
 
 // Route::get('/', function () {
@@ -52,6 +53,10 @@ Route::middleware(TokenVerificationMiddleware::class)->group(function () {
         Route::get('/list-customer', 'CustomerList')->name('customer.list');
         Route::post('/update-customer', 'CustomerUpdate')->name('customer.update');
         Route::get('/delete-customer/{id}', 'CustomerDelete')->name('customer.delete');
+    });
+    //Invoice all routes
+    Route::controller(InvoiceController::class)->group(function () {
+        Route::post('/invoice-create', 'InvoiceCreate')->name('invoice.create');
 
     });
 
