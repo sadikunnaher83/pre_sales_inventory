@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\InvoiceProduct;
 use App\Models\Product;
 use Exception;
@@ -67,4 +68,58 @@ class InvoiceController extends Controller
             DB::rollBack();
         }
     }//End method
+
+    public function InvoiceList(Request $request)
+    {
+        $user_id = $request->header('id');
+        return Invoice::where('user_id', $user_id)->with(['customer'])->get();
+    }//end method
+
+    public function InvoiceDetails(Request $request)
+    {
+
+        $user_id = $request->header('id');
+
+        $customerDetails = Customer::where('user_id', $user_id)->where('id', $request->input('customer_id'))->first();
+
+        $invoiceDetails = Invoice::where('user_id', $user_id)->where('id', $request->input('invoice_id'))->first();
+
+        $invoiceProducts = InvoiceProduct::where('user_id', $user_id)->where('invoice_id', $request->input('invoice_id'))->with('product')->get();
+
+        return [
+            'customer' => $customerDetails,
+            'invoice' => $invoiceDetails,
+            'products' => $invoiceProducts,
+        ];
+
+    }//end method
+
+
+    public function InvoiceDelete(Request $request, $id)
+    {
+       DB::beginTransaction();
+       try {
+        $user_id = $request->header('id');
+        InvoiceProduct::where('user_id', $user_id)->where('invoice_id', $id)->delete();
+        Invoice::where('user_id', $user_id)->where('id', $id)->delete();
+
+       DB::commit();
+
+          return response()->json([
+              'status' => 'success',
+              'message' => 'Invoice deleted successfully',
+          ]);
+       } catch (Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'status' => 'failed',
+            'message' => 'Something went wrong, Please try again later',
+        ]);
+       }
+
+
+
+    }//end method
+
+
 }

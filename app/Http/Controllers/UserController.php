@@ -14,7 +14,7 @@ class UserController extends Controller
 {
     public function UserRegistration(Request $request)
     {
-        try{
+        try {
             $request->validate([
                 'name' => 'required',
                 'mobile' => 'nullable',
@@ -27,7 +27,7 @@ class UserController extends Controller
                 'mobile' => $request->mobile,
                 'email' => $request->email,
                 // 'password' => bcrypt($request->password),
-                 'password' => $request->password,
+                'password' => $request->password,
             ]);
 
             return response()->json([
@@ -35,7 +35,7 @@ class UserController extends Controller
                 'message' => "User Registration Successful",
                 'data' => $user,
             ]);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage()
@@ -48,7 +48,7 @@ class UserController extends Controller
     {
         $count = User::where('email', $request->input('email'))->where('password', $request->input('password'))->select('id')->first();
 
-        if($count !== null){
+        if ($count !== null) {
             $token = JWTToken::CreateToken($request->input('email'), $count->id);
 
             return response()->json([
@@ -56,12 +56,12 @@ class UserController extends Controller
                 'message' => "User login successful",
                 'token' => $token,
 
-            ],200)->cookie('token', $token, 60*24*30);
-        }else{
+            ], 200)->cookie('token', $token, 60 * 24 * 30);
+        } else {
             return response()->json([
                 'status' => 'failed',
                 'message' => "User login failed",
-            ],200);
+            ], 200);
         }
     }
 
@@ -70,7 +70,7 @@ class UserController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => "User logout successful",
-        ],200)->cookie('token', '', -1);
+        ], 200)->cookie('token', '', -1);
     }
 
     public function DashboardPage(Request $request)
@@ -90,15 +90,15 @@ class UserController extends Controller
         $opt = rand(1000, 9999);
         $count = User::where('email', $email)->count();
 
-        if($count == 1){
+        if ($count == 1) {
             Mail::to($email)->send(new OTPMail($opt));
             User::where('email', $email)->update(['otp' => $opt]);
 
             return response()->json([
                 'status' => 'success',
                 'message' => "4 Digit {$opt} OTP code sent successfully",
-            ],200);
-        }else{
+            ], 200);
+        } else {
             return response()->json([
                 'status' => 'failed',
                 'message' => "User not found",
@@ -113,15 +113,15 @@ class UserController extends Controller
 
         $count = User::where('email', $email)->where('otp', $otp)->count();
 
-        if($count == 1){
-            User::where('email', $email)->update(['otp'=> '0']);
+        if ($count == 1) {
+            User::where('email', $email)->update(['otp' => '0']);
             $token = JWTToken::CreateTokenForSetPassword($email);
 
             return response()->json([
                 'status' => 'success',
                 'message' => 'OTP verified successfully',
-            ],200)->cookie('token', $token, 60*24*30);
-        }else{
+            ], 200)->cookie('token', $token, 60 * 24 * 30);
+        } else {
             return response()->json([
                 'status' => 'failed',
                 'message' => 'OTP verification failed',
@@ -131,11 +131,11 @@ class UserController extends Controller
 
     public function ResetPassword(Request $request)
     {
-        try{
+        try {
             $email = $request->header('email');
             $password = $request->input('password');
 
-         User::where('email', $email)->update(['password' => $password]);
+            User::where('email', $email)->update(['password' => $password]);
 
             // $user = User::where('email', $email)->first();
 
@@ -147,7 +147,7 @@ class UserController extends Controller
                 'status' => 'success',
                 'message' => 'Password reset successfully',
             ], 200);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return response()->json([
                 'status' => 'failed',
                 // 'message' => 'something went wrong!Please try again later',
@@ -155,4 +155,26 @@ class UserController extends Controller
             ], 200);
         }
     }
+
+    public function UserUpdate(Request $request)
+    {
+        $user_email = $request->header('userEmail');
+        $new_email = $request->input('email');
+
+        $user = User::where('email', $user_email)->first();
+
+        $user->update([
+            'name' => $request->input('name'),
+            'email' => $new_email,
+            'mobile' => $request->input('mobile'),
+        ]);
+
+
+        if ($user_email !== $new_email) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'User updated successfully, You have been logged out due to email change',
+            ])->cookie('token', '', -1);
+        }
+    }//end method
 }

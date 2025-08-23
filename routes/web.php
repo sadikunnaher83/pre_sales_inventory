@@ -7,6 +7,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\TokenVerificationMiddleware;
 
 // Route::get('/', function () {
@@ -57,10 +58,16 @@ Route::middleware(TokenVerificationMiddleware::class)->group(function () {
     //Invoice all routes
     Route::controller(InvoiceController::class)->group(function () {
         Route::post('/invoice-create', 'InvoiceCreate')->name('invoice.create');
-
+        Route::get('/invoice-list', 'InvoiceList')->name('invoice.list');
+        Route::post('/invoice-details', 'InvoiceDetails')->name('invoice.details');
+        Route::get('/invoice-delete/{id}', 'InvoiceDelete')->name('invoice.delete');
     });
 
+    // Dashboard summery route
+    Route::get('/dashboard-summary', [DashboardController::class, 'DashboardSummary'])->name('dashboard.summary');
 
+    //user update route
+    Route::post('/user-update', [UserController::class, 'UserUpdate'])->name('user.update');
 
 });
 
