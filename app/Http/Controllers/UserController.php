@@ -8,6 +8,7 @@ use App\Mail\OTPMail;
 use App\Helper\JWTToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Inertia\Inertia;
 
 
 class UserController extends Controller
@@ -49,19 +50,34 @@ class UserController extends Controller
         $count = User::where('email', $request->input('email'))->where('password', $request->input('password'))->select('id')->first();
 
         if ($count !== null) {
-            $token = JWTToken::CreateToken($request->input('email'), $count->id);
+            // $token = JWTToken::CreateToken($request->input('email'), $count->id);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => "User login successful",
-                'token' => $token,
+            $email = $request->input('email');
+            $user_id = $count->id;
 
-            ], 200)->cookie('token', $token, 60 * 24 * 30);
-        } else {
-            return response()->json([
-                'status' => 'failed',
-                'message' => "User login failed",
-            ], 200);
+            // return response()->json([
+            //     'status' => 'success',
+            //     'message' => "User login successful",
+            //     'token' => $token,
+
+            // ], 200)->cookie('token', $token, 60 * 24 * 30);
+
+            $request->session()->put('email', $email);
+            $request->session()->put('user_id', $user_id);
+
+            $data = ['message' => 'User login successful', 'status' => true, 'error' => ''];
+
+            return redirect('/DashboardPage')->with($data);
+
+        }else{
+            // return response()->json([
+            //     'status' => 'failed',
+            //     'message' => "User login failed",
+            // ], 200);
+
+            $data = ['message' => 'User login failed', 'status' => false, 'error' => ''];
+
+            return redirect('/login')->with($data);
         }
     }
 
@@ -77,11 +93,14 @@ class UserController extends Controller
     {
         $user = $request->header('email');
 
-        return response()->json([
-            'status' => 'success',
-            'message' => "User login successful",
-            'user' => $user,
-        ], 200);
+        // return response()->json([
+        //     'status' => 'success',
+        //     'message' => "User login successful",
+        //     'user' => $user,
+        // ], 200);
+
+        return Inertia::render('DashboardPage', ['user' => $user]);
+
     }
 
     public function SendOTPcode(Request $request)
@@ -176,5 +195,10 @@ class UserController extends Controller
                 'message' => 'User updated successfully, You have been logged out due to email change',
             ])->cookie('token', '', -1);
         }
+    }//end method
+
+    public function LoginPage(Request $request)
+    {
+        return Inertia::render('LoginPage');
     }//end method
 }
