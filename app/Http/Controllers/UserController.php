@@ -31,16 +31,21 @@ class UserController extends Controller
                 'password' => $request->password,
             ]);
 
-            return response()->json([
-                'status' => true,
-                'message' => "User Registration Successful",
-                'data' => $user,
-            ]);
+            // return response()->json([
+            //     'status' => true,
+            //     'message' => "User Registration Successful",
+            //     'data' => $user,
+            // ]);
+            $data = ['message' => 'User Registration Successful', 'status' => true, 'error' => ''];
+            return redirect('/login')->with($data);
         } catch (Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage()
-            ]);
+            // return response()->json([
+            //     'status' => false,
+            //     'message' => $e->getMessage()
+            // ]);
+
+              $data = ['message' => 'User Registration Failed', 'status' => false, 'error' => ''];
+            return redirect('/registration')->with($data);
         }
     }
 
@@ -200,5 +205,10 @@ class UserController extends Controller
     public function LoginPage(Request $request)
     {
         return Inertia::render('LoginPage');
+    }//end method
+
+    public function RegistrationPage(Request $request)
+    {
+        return Inertia::render('RegistrationPage');
     }//end method
 }

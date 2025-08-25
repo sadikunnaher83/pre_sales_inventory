@@ -20,7 +20,7 @@ Route::get('/', [HomeController::class, 'index'])->name('HomePage');
 Route::get('/test', [HomeController::class, 'HomePage'])->name('Home');
 
 //user all route
-Route::post('user-registration', [UserController::class, 'UserRegistration'])->name('UserRegistration');
+Route::post('/user-registration', [UserController::class, 'UserRegistration'])->name('UserRegistration');
 Route::post('/user-login', [UserController::class, 'UserLogin'])->name('user.login');
 Route::get('/user-logout', [UserController::class, 'UserLogout'])->name('user.logout');
 
@@ -75,5 +75,6 @@ Route::middleware(TokenVerificationMiddleware::class)->group(function () {
 
 //frontend all routes
 Route::get('/login', [UserController::class, 'LoginPage'])->name('login.page');
+Route::get('/registration', [UserController::class, 'RegistrationPage'])->name('RegistrationPage');
 
 
