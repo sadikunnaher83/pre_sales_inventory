@@ -37,7 +37,7 @@
                                     <span class="ms-1">|</span>
                                     <a
                                         class="text-center ms-3 h6"
-                                        href="sendOTPForm.html"
+                                        href="/send-otp"
                                         >Forget Password</a
                                     >
                                 </span>

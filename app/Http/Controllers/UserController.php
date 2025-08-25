@@ -118,15 +118,22 @@ class UserController extends Controller
             Mail::to($email)->send(new OTPMail($opt));
             User::where('email', $email)->update(['otp' => $opt]);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => "4 Digit {$opt} OTP code sent successfully",
-            ], 200);
+            $request->session()->put('email', $email);
+
+            // return response()->json([
+            //     'status' => 'success',
+            //     'message' => "4 Digit {$opt} OTP code sent successfully",
+            // ], 200);
+            $data =['message' => '4 Digit '.$opt.' code has been sent to your email successfully', 'status' => true, 'error' => ''];
+            return redirect('/verify-otp')->with($data);
+
         } else {
-            return response()->json([
-                'status' => 'failed',
-                'message' => "User not found",
-            ]);
+                    // return response()->json([
+                    //     'status' => 'failed',
+                    //     'message' => "User not found",
+                    // ]);
+                    $data = ['message' => 'Unauthorized access', 'status' => false, 'error' => ''];
+                    return redirect('/send-otp')->with($data);
         }
     }
 
@@ -210,5 +217,10 @@ class UserController extends Controller
     public function RegistrationPage(Request $request)
     {
         return Inertia::render('RegistrationPage');
+    }//end method
+
+    public function SendOTPPage(Request $request)
+    {
+        return Inertia::render('SendOTPPage');
     }//end method
 }
