@@ -94,19 +94,6 @@ class UserController extends Controller
         ], 200)->cookie('token', '', -1);
     }
 
-    public function DashboardPage(Request $request)
-    {
-        $user = $request->header('email');
-
-        // return response()->json([
-        //     'status' => 'success',
-        //     'message' => "User login successful",
-        //     'user' => $user,
-        // ], 200);
-
-        return Inertia::render('DashboardPage', ['user' => $user]);
-
-    }
 
     public function SendOTPcode(Request $request)
     {
@@ -133,40 +120,61 @@ class UserController extends Controller
                     //     'message' => "User not found",
                     // ]);
                     $data = ['message' => 'Unauthorized access', 'status' => false, 'error' => ''];
-                    return redirect('/send-otp')->with($data);
+                    return redirect('/registration')->with($data);
         }
     }
 
     public function VerifyOTP(Request $request)
     {
-        $email = $request->input('email');
+        // $email = $request->input('email');
+        $email = $request->session()->get('email','default');
+
         $otp = $request->input('otp');
 
         $count = User::where('email', $email)->where('otp', $otp)->count();
 
         if ($count == 1) {
             User::where('email', $email)->update(['otp' => '0']);
-            $token = JWTToken::CreateTokenForSetPassword($email);
+            // $token = JWTToken::CreateTokenForSetPassword($email);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'OTP verified successfully',
-            ], 200)->cookie('token', $token, 60 * 24 * 30);
+            $request->session()->put('otp_verified', 'yes');
+            // return response()->json([
+            //     'status' => 'success',
+            //     'message' => 'OTP verified successfully',
+            // ], 200)->cookie('token', $token, 60 * 24 * 30);
+            $data = ['message' => 'OTP verified successfully', 'status' => true, 'error' => ''];
+            return redirect('/reset-password')->with($data);
+
         } else {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'OTP verification failed',
-            ], 200);
+            // return response()->json([
+            //     'status' => 'failed',
+            //     'message' => 'OTP verification failed',
+            // ], 200);
+
+            $data = ['message' => 'OTP verification failed', 'status' => false, 'error' => ''];
+            return redirect('/verify-otp')->with($data);
         }
     }
 
     public function ResetPassword(Request $request)
     {
         try {
-            $email = $request->header('email');
-            $password = $request->input('password');
+            // $email = $request->header('email');
 
-            User::where('email', $email)->update(['password' => $password]);
+            $email = $request->session()->get('email', 'default');
+            $password = $request->input('password');
+            $otp_verify = $request->session()->get('otp_verified', 'default');
+            if($otp_verify === 'yes'){
+                 User::where('email', $email)->update(['password' => $password]);
+                 $request->session()->flush();
+                 $data = ['message' => 'Password reset successfully', 'status' => true, 'error' => ''];
+                 return redirect('/login')->with($data);
+            }else{
+                 $data = ['message' => 'Password reset failed', 'status' => false, 'error' => ''];
+                 return redirect('/reset-password')->with($data);
+            }
+
+
 
             // $user = User::where('email', $email)->first();
 
@@ -174,16 +182,19 @@ class UserController extends Controller
 
             // $user->save();
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Password reset successfully',
-            ], 200);
+            // return response()->json([
+            //     'status' => 'success',
+            //     'message' => 'Password reset successfully',
+            // ], 200);
         } catch (Exception $e) {
-            return response()->json([
-                'status' => 'failed',
-                // 'message' => 'something went wrong!Please try again later',
-                'message' => $e->getMessage(),
-            ], 200);
+            // return response()->json([
+            //     'status' => 'failed',
+            //     // 'message' => 'something went wrong!Please try again later',
+            //     'message' => $e->getMessage(),
+            // ], 200);
+
+            $data = ['message' => 'Password reset failed', 'status' => false, 'error' => ''];
+                 return redirect('/reset-password')->with($data);
         }
     }
 
@@ -222,5 +233,15 @@ class UserController extends Controller
     public function SendOTPPage(Request $request)
     {
         return Inertia::render('SendOTPPage');
+    }//end method
+
+    public function VerifyOTPPage(Request $request)
+    {
+        return Inertia::render('VerifyOTPPage');
+    }//end method
+
+    public function ResetPasswordPage(Request $request)
+    {
+        return Inertia::render('ResetPasswordPage');
     }//end method
 }

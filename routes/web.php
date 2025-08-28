@@ -25,14 +25,14 @@ Route::post('/user-registration', [UserController::class, 'UserRegistration'])->
 Route::post('/user-login', [UserController::class, 'UserLogin'])->name('user.login');
 Route::get('/user-logout', [UserController::class, 'UserLogout'])->name('user.logout');
 
-Route::get('/DashboardPage', [UserController::class, 'DashboardPage'])->middleware([SessionAuthenticate::class])->name('dashboard.page');
+Route::get('/DashboardPage', [DashboardController::class, 'DashboardPage'])->middleware([SessionAuthenticate::class])->name('dashboard.page');
 
 Route::post('/send-otp', [UserController::class, 'SendOTPcode'])->name('SendOTPcode');
 Route::post('/verify-otp', [UserController::class, 'VerifyOTP'])->name('VerifyOTP');
 
-Route::post('/reset-password', [UserController::class, 'ResetPassword'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/reset-password', [UserController::class, 'ResetPassword'])->middleware([SessionAuthenticate::class]);
 
-Route::middleware(TokenVerificationMiddleware::class)->group(function () {
+Route::middleware(SessionAuthenticate::class)->group(function () {
     //category all routes
     Route::controller(CategoryController::class)->group(function () {
         Route::post('/category-create', 'CategoryCreate')->name('category.create');
@@ -40,6 +40,7 @@ Route::middleware(TokenVerificationMiddleware::class)->group(function () {
         Route::post('/category-by-id', 'CategoryById')->name('category.by.id');
         Route::post('/update-category', 'CategoryUpdate')->name('category.update');
         Route::get('/delete-category/{id}', 'CategoryDelete')->name('category.delete');
+        Route::get('/CategoryPage', 'CategoryPage')->name('category.page');
     });
 
     //product all routes
@@ -78,8 +79,9 @@ Route::middleware(TokenVerificationMiddleware::class)->group(function () {
 Route::get('/login', [UserController::class, 'LoginPage'])->name('login.page');
 Route::get('/registration', [UserController::class, 'RegistrationPage'])->name('RegistrationPage');
 Route::get('/send-otp', [UserController::class, 'SendOTPPage'])->name('SendOTPcode');
-Route::get('/verify-otp',function (){
-    return Inertia::render('VerifyOTPPage');
-});
+Route::get('/verify-otp', [UserController::class, 'VerifyOTPPage'])->name('VerifyOTPPage');
+Route::get('/reset-password', [UserController::class, 'ResetPasswordPage'])->middleware([SessionAuthenticate::class]);
+
+
 
 

@@ -1,12 +1,12 @@
 <template>
  <NavLayout>
-    <VerifyOTPForm />
+    <ResetPasswordForm />
  </NavLayout>
 </template>
 
 <script setup>
     import NavLayout from '../layout/NavLayout.vue';
-    import VerifyOTPForm from '../Components/User/VerifyOTPForm.vue';
+    import ResetPasswordForm from '../Components/User/ResetPasswordForm.vue';
 </script>
 
 <style scoped>
@@ -15,3 +15,4 @@
 
 
 </style>
+
