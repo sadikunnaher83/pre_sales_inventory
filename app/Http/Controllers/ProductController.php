@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use Exception;
+use Inertia\Inertia;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -145,16 +146,28 @@ class ProductController extends Controller
 
     $product->delete();
 
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Product deleted successfully',
-    ]);
+    // return response()->json([
+    //     'status' => 'success',
+    //     'message' => 'Product deleted successfully',
+    // ]);
+
+   $data = ['message' => 'Product deleted successfully', 'status' => 'true', 'error' => ''];
+   return redirect()->back()->with($data);
     } catch (Exception $e) {
-        return response()->json([
-            'status' => 'failed',
-            'message' => 'something went wrong,Please try again later',
-        ]);
+                // return response()->json([
+                //     'status' => 'failed',
+                //     'message' => 'something went wrong,Please try again later',
+                // ]);
+                $data = ['message' => 'something went wrong,Please try again later', 'status' => 'false', 'error' => ''];
+                return redirect()->back()->with($data);
     }
-}
+}//end method
+
+public function ProductPage(Request $request)
+{
+    $user_id = $request->header('id');
+    $products = Product::where('user_id', $user_id)->with('category')->latest()->get();
+    return Inertia::render('ProductPage', ['products' => $products]);
+}//end method
 
 }
