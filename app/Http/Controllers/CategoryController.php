@@ -22,10 +22,13 @@ class CategoryController extends Controller
 
         ]);
 
-        return response()->json([
-            'status' => "success",
-            'message' => "Category Created Successfully",
-        ]);
+        // return response()->json([
+        //     'status' => "success",
+        //     'message' => "Category Created Successfully",
+        // ]);
+
+        $data = ['message' => 'Category created successfully', 'status' => 'true', 'error' => ''];
+        return redirect('/CategoryPage')->with($data);
     }
     //end CategoryCreate
 
@@ -55,10 +58,13 @@ class CategoryController extends Controller
             'name' => $request->name,
          ]);
 
-         return response()->json([
-             'status' => "success",
-             'message' => "Category Updated Successfully",
-         ]);
+        //  return response()->json([
+        //      'status' => "success",
+        //      'message' => "Category Updated Successfully",
+        //  ]);
+
+        $data = ['message' => 'Category updated successfully', 'status' => 'true', 'error' => ''];
+        return redirect('/CategoryPage')->with($data);
     }
 //end method
     public function CategoryDelete(Request $request, $id)
@@ -83,5 +89,15 @@ class CategoryController extends Controller
 
         return Inertia::render('CategoryPage', ['categories' => $categories]);
 
+    }//end method
+
+    public function CategorySavePage(Request $request)
+    {
+        $category_id = $request->query('id');
+
+        $user_id = $request->header('id');
+
+       $category = Category::where('id', $category_id)->where('user_id', $user_id)->first();
+        return Inertia::render('CategorySavePage', ['category' => $category]);
     }//end method
 }
