@@ -59,6 +59,8 @@ Route::middleware(SessionAuthenticate::class)->group(function () {
         Route::get('/list-customer', 'CustomerList')->name('customer.list');
         Route::post('/update-customer', 'CustomerUpdate')->name('customer.update');
         Route::get('/delete-customer/{id}', 'CustomerDelete')->name('customer.delete');
+        Route::get('/CustomerPage', 'CustomerPage')->name('CustomerPage');
+        Route::get('/CustomerSavePage', 'CustomerSavePage')->name('CustomerSavePage');
     });
     //Invoice all routes
     Route::controller(InvoiceController::class)->group(function () {
@@ -66,6 +68,7 @@ Route::middleware(SessionAuthenticate::class)->group(function () {
         Route::get('/invoice-list', 'InvoiceList')->name('invoice.list');
         Route::post('/invoice-details', 'InvoiceDetails')->name('invoice.details');
         Route::get('/invoice-delete/{id}', 'InvoiceDelete')->name('invoice.delete');
+        Route::get('/InvoiceListPage', 'InvoiceListPage')->name('InvoiceListPage');
     });
 
     // Dashboard summery route

@@ -30,12 +30,12 @@
                 <span class="side-bar-item-caption">Category</span>
             </Link>
 
-            <a href="customer-list.html" class="side-bar-item">
+            <Link href="/CustomerPage" class="side-bar-item">
                 <span class="side-bar-item-icon"
                     ><i class="fa fa-users text-green"></i
                 ></span>
                 <span class="side-bar-item-caption">Customer</span>
-            </a>
+            </Link>
 
             <Link href="/ProductPage" class="side-bar-item">
                 <span class="side-bar-item-icon"
@@ -51,12 +51,12 @@
                 <span class="side-bar-item-caption">Create Sale</span>
             </a>
 
-            <a href="invoiceList.html" class="side-bar-item">
+            <Link href="/InvoiceListPage" class="side-bar-item">
                 <span class="side-bar-item-icon"
                     ><i class="fa fa-file-invoice-dollar text-green"></i
                 ></span>
                 <span class="side-bar-item-caption">Invoice</span>
-            </a>
+            </Link>
 
             <a href="profileForm.html" class="side-bar-item">
                 <span class="side-bar-item-icon"
