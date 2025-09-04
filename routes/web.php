@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
@@ -76,6 +77,10 @@ Route::middleware(SessionAuthenticate::class)->group(function () {
 
     //user update route
     Route::post('/user-update', [UserController::class, 'UserUpdate'])->name('user.update');
+
+    //sale all routes
+    Route::get('/create-sale', [SaleController::class, 'SalePage'])->name('sale.page');
+
 
 });
 

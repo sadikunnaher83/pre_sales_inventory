@@ -44,12 +44,12 @@
                 <span class="side-bar-item-caption">Product</span>
             </Link>
 
-            <a href="salePage.html" class="side-bar-item">
+            <Link href="/create-sale" class="side-bar-item">
                 <span class="side-bar-item-icon"
                     ><i class="fa fa-shopping-cart text-green"></i
                 ></span>
                 <span class="side-bar-item-caption">Create Sale</span>
-            </a>
+            </Link>
 
             <Link href="/InvoiceListPage" class="side-bar-item">
                 <span class="side-bar-item-icon"
