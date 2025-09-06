@@ -15,6 +15,8 @@ class InvoiceController extends Controller
 {
     public function InvoiceCreate(Request $request)
     {
+
+        // dd($request->all());
         DB::beginTransaction();
         try {
             $user_id = $request->header('id');
@@ -34,17 +36,24 @@ class InvoiceController extends Controller
             foreach($products as $product){
                 $exitUnit = Product::where('id', $product['id'])->select('unit')->first();
                 if(!$exitUnit){
-                    return response()->json([
-                        'status' => 'failed',
-                        'message' => "Product with ID {$product['id']} not found",
-                    ],404);
+                    // return response()->json([
+                    //     'status' => 'failed',
+                    //     'message' => "Product with ID {$product['id']} not found",
+                    // ],404);
+
+                    $data = ['message' => "Product with ID {$product['id']} not found", 'status' => 'false', 'error' => ''];
+                    return redirect()->back()->with($data);
                 }
 
                 if($exitUnit->unit < $product['unit']){
-                    return response()->json([
-                        'status' => 'failed',
-                        'message' => "only {$exitUnit->unit} Unit available for Product with ID {$product['id']}",
-                    ]);
+                    // return response()->json([
+                    //     'status' => 'failed',
+                    //     'message' => "only {$exitUnit->unit} Unit available for Product with ID {$product['id']}",
+                    // ]);
+
+                    $data = ['message' => "only {$exitUnit->unit} Unit available for Product with ID {$product['id']}", 'status' => 'false', 'error' => ''];
+                    return redirect()->back()->with($data);
+
                 }
                 InvoiceProduct::create([
                     'invoice_id' => $invoice->id,
@@ -61,12 +70,18 @@ class InvoiceController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Invoice created successfully',
-            ]);
+            // return response()->json([
+            //     'status' => 'success',
+            //     'message' => 'Invoice created successfully',
+            // ]);
+
+            $data = ['message' => 'Invoice created successfully', 'status' => 'true', 'error' => ''];
+            return redirect('/InvoiceListPage')->with($data);
         } catch (Exception $e) {
             DB::rollBack();
+
+            $data = ['message' => 'something went wrong,Please try again later', 'status' => 'false', 'error' => ''];
+             return redirect('/InvoiceListPage')->with($data);
         }
     }//End method
 
